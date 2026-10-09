@@ -1,1 +1,380 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101b35">
+<title>Ocean Whispers | My Journal</title>
+<style>
+:root {
+  --navy: #101b35;
+  --panel: #1c2946;
+  --lavender: #c9bce8;
+  --blue: #a9c2ed;
+  --cream: #f5f0e8;
+  --muted: #bac5dc;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--navy); color: var(--cream);
+  font-family: Georgia, "Times New Roman", serif;
+}
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+header {
+  text-align: center; padding: 26px 16px 18px;
+  border-bottom: 1px solid #34405d;
+}
+.logo-mark { font-size: 34px; color: var(--blue); }
+.brand { font-size: clamp(28px, 8vw, 40px); margin: 5px 0; }
+.tagline { color: var(--muted); font-style: italic; }
+nav {
+  display: flex; justify-content: center; flex-wrap: wrap;
+  gap: 8px; padding: 14px 10px;
+}
+nav button, .secondary {
+  border: 1px solid #52617e; border-radius: 20px;
+  padding: 10px 13px; background: transparent; color: var(--cream);
+}
+nav button.active, .primary {
+  background: var(--blue); color: var(--navy); border: none;
+}
+main { max-width: 620px; margin: auto; padding: 12px 18px 40px; }
+h2 { font-size: 27px; font-weight: normal; }
+h3 { font-weight: normal; }
+.card {
+  background: var(--panel); padding: 20px;
+  border: 1px solid #344361; border-radius: 18px;
+  margin: 15px 0;
+}
+.eyebrow { color: var(--lavender); font-size: 12px; letter-spacing: 2px; }
+p { line-height: 1.7; }
+.muted { color: var(--muted); }
+.primary { padding: 13px 18px; border-radius: 12px; }
+.full { width: 100%; }
+input, textarea {
+  width: 100%; padding: 13px; border-radius: 10px;
+  border: 1px solid #52617e; background: #111d37;
+  color: white; margin: 8px 0 14px;
+}
+textarea { min-height: 170px; resize: vertical; line-height: 1.7; }
+label { display: block; color: var(--muted); }
+.moods { display: flex; gap: 9px; flex-wrap: wrap; }
+.mood {
+  background: #111d37; border: 1px solid #52617e;
+  border-radius: 12px; padding: 12px; color: white;
+}
+.mood.selected { border-color: var(--blue); background: #344665; }
+.entry {
+  border-bottom: 1px solid #40506d; padding: 12px 0;
+}
+.entry button { margin: 5px 5px 5px 0; }
+[hidden] { display: none !important; }
+footer { text-align: center; color: var(--muted); padding: 22px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-mark">❧ 🦋 ❧</div>
+  <h1 class="brand">Ocean Whispers</h1>
+  <div class="tagline">A little space, just for you.</div>
+</header>
+
+<nav aria-label="Journal navigation">
+  <button class="active" data-page="home">Home</button>
+  <button data-page="write">My Journal</button>
+  <button data-page="mood">Moon & Mood</button>
+  <button data-page="prompts">Soul Pages</button>
+  <button data-page="saved">My Entries</button>
+</nav>
+
+<main>
+<section id="home">
+  <div class="card">
+    <div class="eyebrow">A MOMENT FOR YOURSELF</div>
+    <h2>How is your heart today?</h2>
+    <p class="muted">Let the noise of the world fade. Your thoughts
+    are welcome here, exactly as they are.</p>
+    <button class="primary full" data-go="write">Begin journaling ✦</button>
+  </div>
+  <div class="card">
+    <div class="eyebrow">TODAY'S WHISPER</div>
+    <p id="dailyQuote">You are allowed to grow at your own pace.</p>
+  </div>
+  <div class="card">
+    <h3>A gentle reminder</h3>
+    <p class="muted">You do not need to have every answer today.
+    Sometimes, simply listening to yourself is enough.</p>
+  </div>
+</section>
+
+<section id="write" hidden>
+  <div class="eyebrow">YOUR PRIVATE LITTLE WORLD</div>
+  <h2 id="editorHeading">Dear Diary...</h2>
+  <p class="muted">Give your thoughts somewhere to land.</p>
+  <form id="journalForm">
+    <input id="entryTitle" maxlength="100" placeholder="Give this page a title" required>
+    <label for="entryDate">Date</label>
+    <input id="entryDate" type="date" required>
+    <label for="entryMood">Today's mood</label>
+    <select id="entryMood" style="width:100%;padding:12px;margin:8px 0 14px;border-radius:10px;background:#111d37;color:white">
+      <option>🌙 Peaceful</option>
+      <option>🌧️ Sad</option>
+      <option>✨ Hopeful</option>
+      <option>🌊 Overwhelmed</option>
+      <option>🌷 Grateful</option>
+      <option>☁️ Unsure</option>
+      <option>☀️ Happy</option>
+    </select>
+    <label for="entryBody">What's on your mind?</label>
+    <textarea id="entryBody" placeholder="Dear me, today I feel..." required></textarea>
+    <button class="primary full" type="submit">Save my page ♡</button>
+    <button class="secondary full" type="button" id="newEntry" style="margin-top:10px">Start a new page</button>
+    <p id="saveMessage" role="status" class="muted"></p>
+  </form>
+</section>
+
+<section id="mood" hidden>
+  <div class="eyebrow">MOON & MOOD</div>
+  <h2>What does your inner sky look like?</h2>
+  <p class="muted">Every feeling deserves a little kindness.</p>
+  <div class="card">
+    <div class="moods" id="moodChoices">
+      <button class="mood" data-mood="Peaceful">🌙 Peaceful</button>
+      <button class="mood" data-mood="Happy">☀️ Happy</button>
+      <button class="mood" data-mood="Sad">🌧️ Sad</button>
+      <button class="mood" data-mood="Hopeful">✨ Hopeful</button>
+      <button class="mood" data-mood="Overwhelmed">🌊 Overwhelmed</button>
+      <button class="mood" data-mood="Grateful">🌷 Grateful</button>
+    </div>
+    <p id="moodMessage" role="status" class="muted">Choose the feeling closest to yours.</p>
+    <button class="primary" id="saveMood">Save today's mood</button>
+  </div>
+</section>
+
+<section id="prompts" hidden>
+  <div class="eyebrow">SOUL PAGES</div>
+  <h2>A question for your soul</h2>
+  <div class="card">
+    <p id="promptText">What is something small that made you smile today?</p>
+    <button class="secondary" id="nextPrompt">Another prompt ↗</button>
+    <button class="primary" id="answerPrompt" style="margin-top:10px">Write about this</button>
+  </div>
+  <div class="card">
+    <h3>Letters to your future self</h3>
+    <p class="muted">What would you like the version of you one year from now to remember?</p>
+    <button class="primary" id="futureLetter">Begin your letter</button>
+  </div>
+</section>
+
+<section id="saved" hidden>
+  <div class="eyebrow">YOUR GROWING COLLECTION</div>
+  <h2>Pages of you</h2>
+  <p class="muted">Your saved pages appear here on this device.</p>
+  <input id="searchEntries" placeholder="Search your entries...">
+  <div id="entryList"></div>
+  <div class="card">
+    <h3>Keep a backup</h3>
+    <p class="muted">Download your journal entries to keep a separate copy.</p>
+    <button class="primary full" id="exportEntries">Export my journal</button>
+  </div>
+</section>
+
+<p class="muted" style="font-size:12px;text-align:center">
+  Your thoughts matter. This prototype stores entries in this browser.
+  It is not encrypted or password-protected.
+</p>
+</main>
+<footer>Made with care, beneath the same sky. ☾</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const pages = ["home","write","mood","prompts","saved"];
+const quotes = [
+  "You are allowed to grow at your own pace.",
+  "Even the ocean has quiet days.",
+  "Small beginnings are still beginnings.",
+  "Give yourself the kindness you give others.",
+  "You can begin again, as many times as you need."
+];
+const prompts = [
+  "What is something small that made you smile today?",
+  "What do you wish people understood about you?",
+  "What are three things you are grateful for?",
+  "What would you tell your younger self?",
+  "Describe your perfect peaceful day.",
+  "What are you ready to welcome into your life?",
+  "Write a letter to yourself one year from now."
+];
+let selectedMood = "";
+let editingId = null;
+let currentPrompt = prompts[0];
+
+function getEntries() {
+  try { return JSON.parse(localStorage.getItem("ow_entries") || "[]"); }
+  catch { return []; }
+}
+function storeEntries(entries) {
+  localStorage.setItem("ow_entries", JSON.stringify(entries));
+}
+function showPage(id) {
+  pages.forEach(p => $(p).hidden = p !== id);
+  document.querySelectorAll("nav button").forEach(b =>
+    b.classList.toggle("active", b.dataset.page === id));
+  if (id === "saved") renderEntries();
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll("[data-page]").forEach(b =>
+  b.addEventListener("click", () => showPage(b.dataset.page)));
+document.querySelectorAll("[data-go]").forEach(b =>
+  b.addEventListener("click", () => showPage(b.dataset.go)));
+
+$("dailyQuote").textContent = quotes[
+  Math.floor(Date.now() / 86400000) % quotes.length
+];
+$("entryDate").value = new Date().toLocaleDateString("en-CA");
+
+function resetEditor() {
+  editingId = null;
+  $("journalForm").reset();
+  $("entryDate").value = new Date().toLocaleDateString("en-CA");
+  $("editorHeading").textContent = "Dear Diary...";
+  $("saveMessage").textContent = "";
+}
+$("newEntry").addEventListener("click", resetEditor);
+
+$("journalForm").addEventListener("submit", event => {
+  event.preventDefault();
+  try {
+    const entries = getEntries();
+    const entry = {
+      id: editingId || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
+      title: $("entryTitle").value.trim(),
+      date: $("entryDate").value,
+      mood: $("entryMood").value,
+      body: $("entryBody").value,
+      updated: new Date().toISOString()
+    };
+    const index = entries.findIndex(e => e.id === entry.id);
+    if (index >= 0) entries[index] = entry;
+    else entries.unshift(entry);
+    storeEntries(entries);
+    editingId = null;
+    $("saveMessage").textContent = "Your page has been saved on this device. ♡";
+    $("editorHeading").textContent = "Dear Diary...";
+  } catch {
+    $("saveMessage").textContent = "Unable to save. Your browser storage may be full.";
+  }
+});
+
+document.querySelectorAll("[data-mood]").forEach(b => {
+  b.addEventListener("click", () => {
+    selectedMood = b.dataset.mood;
+    document.querySelectorAll("[data-mood]").forEach(x =>
+      x.classList.toggle("selected", x === b));
+    $("moodMessage").textContent = "You chose " + selectedMood +
+      ". Give yourself room to feel.";
+  });
+});
+$("saveMood").addEventListener("click", () => {
+  if (!selectedMood) {
+    $("moodMessage").textContent = "Choose a mood first, buddy. ♡";
+    return;
+  }
+  try {
+    const moods = JSON.parse(localStorage.getItem("ow_moods") || "{}");
+    moods[new Date().toLocaleDateString("en-CA")] = selectedMood;
+    localStorage.setItem("ow_moods", JSON.stringify(moods));
+    $("moodMessage").textContent = "Today's mood has been saved. ♡";
+  } catch {
+    $("moodMessage").textContent = "Unable to save this mood.";
+  }
+});
+
+$("nextPrompt").addEventListener("click", () => {
+  const options = prompts.filter(p => p !== currentPrompt);
+  currentPrompt = options[Math.floor(Math.random() * options.length)];
+  $("promptText").textContent = currentPrompt;
+});
+$("answerPrompt").addEventListener("click", () => {
+  resetEditor();
+  $("entryTitle").value = currentPrompt;
+  $("entryBody").focus();
+  showPage("write");
+});
+$("futureLetter").addEventListener("click", () => {
+  resetEditor();
+  $("entryTitle").value = "To my future self";
+  $("entryBody").value = "Dear future me,\n\nI hope you remember...";
+  showPage("write");
+});
+
+function renderEntries() {
+  const query = $("searchEntries").value.toLowerCase();
+  const entries = getEntries().filter(e =>
+    (e.title + " " + e.body + " " + e.mood).toLowerCase().includes(query));
+  $("entryList").replaceChildren();
+  if (!entries.length) {
+    const p = document.createElement("p");
+    p.className = "muted";
+    p.textContent = "No pages yet. Your story starts with one sentence. ♡";
+    $("entryList").append(p);
+  }
+  entries.forEach(e => {
+    const card = document.createElement("div");
+    card.className = "entry";
+    const title = document.createElement("h3");
+    title.textContent = e.title;
+    const info = document.createElement("p");
+    info.className = "muted";
+    info.textContent = e.date + " · " + e.mood;
+    const preview = document.createElement("p");
+    preview.textContent = e.body.length > 130 ? e.body.slice(0,130) + "…" : e.body;
+    const edit = document.createElement("button");
+    edit.className = "secondary";
+    edit.textContent = "Edit";
+    edit.addEventListener("click", () => {
+      editingId = e.id;
+      $("entryTitle").value = e.title;
+      $("entryDate").value = e.date;
+      $("entryMood").value = e.mood;
+      $("entryBody").value = e.body;
+      $("editorHeading").textContent = "Return to this page";
+      showPage("write");
+    });
+    const del = document.createElement("button");
+    del.className = "secondary";
+    del.textContent = "Delete";
+    del.addEventListener("click", () => {
+      if (confirm("Delete this journal page? This cannot be undone.")) {
+        storeEntries(getEntries().filter(x => x.id !== e.id));
+        renderEntries();
+      }
+    });
+    card.append(title, info, preview, edit, del);
+    $("entryList").append(card);
+  });
+}
+$("searchEntries").addEventListener("input", renderEntries);
+
+$("exportEntries").addEventListener("click", () => {
+  const backup = {
+    entries: getEntries(),
+    moods: JSON.parse(localStorage.getItem("ow_moods") || "{}")
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)],
+    {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "ocean-whispers-backup.json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+showPage("home");
+</script>
+</body>
+      </html>
+
